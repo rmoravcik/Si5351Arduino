@@ -320,12 +320,16 @@ public:
 private:
 	uint64_t pll_calc(enum si5351_pll, uint64_t, struct Si5351RegSet *, int32_t, uint8_t);
 	uint64_t multisynth_calc(uint64_t, uint64_t, struct Si5351RegSet *);
+#ifdef SI5351_WITH_CLK67
 	uint64_t multisynth67_calc(uint64_t, uint64_t, struct Si5351RegSet *);
+#endif
 	void update_sys_status(struct Si5351Status *);
 	void update_int_status(struct Si5351IntStatus *);
 	void ms_div(enum si5351_clock, uint8_t, uint8_t);
 	uint8_t select_r_div(uint64_t *);
+#ifdef SI5351_WITH_CLK67
 	uint8_t select_r_div_ms67(uint64_t *);
+#endif
 	int32_t ref_correction[2];
   uint8_t clkin_div;
   uint8_t i2c_bus_addr;

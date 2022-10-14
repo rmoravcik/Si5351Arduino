@@ -316,6 +316,7 @@ uint8_t Si5351::set_freq(uint64_t freq, enum si5351_clock clk)
 
 		return 0;
 	}
+#ifdef SI5351_WITH_CLK67
 	else
 	{
 		// MS6 and MS7 logic
@@ -431,6 +432,7 @@ uint8_t Si5351::set_freq(uint64_t freq, enum si5351_clock clk)
 
 		return 0;
 	}
+#endif
 }
 
 /*
@@ -662,6 +664,7 @@ void Si5351::set_ms(enum si5351_clock clk, struct Si5351RegSet ms_reg, uint8_t i
 			set_int(clk, int_mode);
 			ms_div(clk, r_div, div_by_4);
 			break;
+#ifdef SI5351_WITH_CLK67
 		case SI5351_CLK6:
 			si5351_write(SI5351_CLK6_PARAMETERS, temp);
 			ms_div(clk, r_div, div_by_4);
@@ -670,6 +673,7 @@ void Si5351::set_ms(enum si5351_clock clk, struct Si5351RegSet ms_reg, uint8_t i
 			si5351_write(SI5351_CLK7_PARAMETERS, temp);
 			ms_div(clk, r_div, div_by_4);
 			break;
+#endif
 	}
 
 	delete params;
@@ -1533,6 +1537,7 @@ uint64_t Si5351::multisynth_calc(uint64_t freq, uint64_t pll_freq, struct Si5351
 	}
 }
 
+#ifdef SI5351_WITH_CLK67
 uint64_t Si5351::multisynth67_calc(uint64_t freq, uint64_t pll_freq, struct Si5351RegSet *reg)
 {
 	//uint8_t p1;
@@ -1621,6 +1626,7 @@ uint64_t Si5351::multisynth67_calc(uint64_t freq, uint64_t pll_freq, struct Si53
 		}
 	}
 }
+#endif
 
 void Si5351::update_sys_status(struct Si5351Status *status)
 {
@@ -1674,12 +1680,14 @@ void Si5351::ms_div(enum si5351_clock clk, uint8_t r_div, uint8_t div_by_4)
 		case SI5351_CLK5:
 			reg_addr = SI5351_CLK5_PARAMETERS + 2;
 			break;
+#ifdef SI5351_WITH_CLK67
 		case SI5351_CLK6:
 			reg_addr = SI5351_CLK6_7_OUTPUT_DIVIDER;
 			break;
 		case SI5351_CLK7:
 			reg_addr = SI5351_CLK6_7_OUTPUT_DIVIDER;
 			break;
+#endif
 	}
 
 	reg_val = si5351_read(reg_addr);
@@ -1700,6 +1708,7 @@ void Si5351::ms_div(enum si5351_clock clk, uint8_t r_div, uint8_t div_by_4)
 
 		reg_val |= (r_div << SI5351_OUTPUT_CLK_DIV_SHIFT);
 	}
+#ifdef SI5351_WITH_CLK67
 	else if(clk == SI5351_CLK6)
 	{
 		// Clear the relevant bits
@@ -1714,6 +1723,7 @@ void Si5351::ms_div(enum si5351_clock clk, uint8_t r_div, uint8_t div_by_4)
 
 		reg_val |= (r_div << SI5351_OUTPUT_CLK_DIV_SHIFT);
 	}
+#endif
 
 	si5351_write(reg_addr, reg_val);
 }
@@ -1762,6 +1772,7 @@ uint8_t Si5351::select_r_div(uint64_t *freq)
 	return r_div;
 }
 
+#ifdef SI5351_WITH_CLK67
 uint8_t Si5351::select_r_div_ms67(uint64_t *freq)
 {
 	uint8_t r_div = SI5351_OUTPUT_CLK_DIV_1;
@@ -1805,3 +1816,4 @@ uint8_t Si5351::select_r_div_ms67(uint64_t *freq)
 
 	return r_div;
 }
+#endif
